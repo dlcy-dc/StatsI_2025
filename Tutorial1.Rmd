@@ -18,5 +18,16 @@ df <- read.csv("datasets/movies.csv")
 ```{r}
 
 View(df)
+hist(df$audience_score)
+mean(df$audience_score)
+var(df$audience_score)
+sd(df$audience_score)
 
 ```
+
+```{r}
+
+upper_95 <- (mean(df$audience_score))
+
+```
+
