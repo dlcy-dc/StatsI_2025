@@ -1,0 +1,232 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{graphicx,textcomp}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage[reqno]{amsmath}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{amssymb,enumerate}
+\usepackage[all]{xy}
+\usepackage{endnotes}
+\usepackage{lscape}
+\newtheorem{com}{Comment}
+\usepackage{float}
+\usepackage{hyperref}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\usepackage[compact]{titlesec}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{multirow}
+\usepackage{xcolor}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\definecolor{light-gray}{gray}{0.65}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\newcommand{\Sref}[1]{Section~\ref{#1}}
+\newtheorem{hyp}{Hypothesis}
+
+\title{Problem Set 2}
+\date{Due: October 23, 2025}
+\author{Applied Stats/Quant Methods 1}
+
+\begin{document}
+	\maketitle
+	\section*{Instructions}
+\begin{itemize}
+	\item Please show your work! You may lose points by simply writing in the answer. If the problem requires you to execute commands in \texttt{R}, please include the code you used to get your answers. Please also include the \texttt{.R} file that contains your code. If you are not sure if work needs to be shown for a particular problem, please ask.
+	\item Your homework should be submitted electronically on GitHub.
+	\item This problem set is due before 23:59 on Thursday October 23, 2025. No late assignments will be accepted.
+
+\end{itemize}
+
+	
+	\vspace{.5cm}
+	\section*{Question 1: Political Science}
+		\vspace{.25cm}
+	The following table was created using the data from a study run in a major Latin American city.\footnote{Fried, Lagunes, and Venkataramani (2010). ``Corruption and Inequality at the Crossroad: A Multimethod Study of Bribery and Discrimination in Latin America. \textit{Latin American Research Review}. 45 (1): 76-97.} As part of the experimental treatment in the study, one employee of the research team was chosen to make illegal left turns across traffic to draw the attention of the police officers on shift. Two employee drivers were upper class, two were lower class drivers, and the identity of the driver was randomly assigned per encounter. The researchers were interested in whether officers were more or less likely to solicit a bribe from drivers depending on their class (officers use phrases like, ``We can solve this the easy way'' to draw a bribe). The table below shows the resulting data.
+
+\newpage
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{l | c c c }
+		& Not Stopped & Bribe requested & Stopped/given warning \\
+		\\[-1.8ex] 
+		\hline \\[-1.8ex]
+		Upper class & 14 & 6 & 7 \\
+		Lower class & 7 & 7 & 1 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{enumerate}
+	
+	\item [(a)]
+	Calculate the $\chi^2$ test statistic by hand/manually (even better if you can do "by hand" in \texttt{R}).\\
+	
+	\vspace{.5cm}
+	\textit{First create a matrix based on the data on the experiment}
+	\begin{verbatim}
+		df <- matrix(NA, nrow = 2, ncol = 3)
+		rownames(df) <- c("upper class", "lower class")
+		colnames(df) <- c("not stopped", "bribe requested", "stopped/given warning")
+		df[1, ] <- c(14, 6, 7)
+		df[2, ] <- c(7, 7, 1)
+	\end{verbatim}
+	
+	\vspace{.5cm}		
+	\textit{Then, to calculate the chi-squared by hand, I first find the sum of all rows, of all columns, and the grand total. Then to find the expected values I use the command outer to create a matrix by which the formula for  expected value is applied to each pair. The formula is row total multiplied by column total divided by grand total.}
+		\begin{verbatim}
+		#find row column totals, and grand totals
+		colsum <- colSums(x = df)
+		rowsum <- rowSums(x = df)
+		total <- sum(df)
+		
+		#expected values
+		dfe <- outer(rowsum, colsum)/total
+		
+		#by hand
+		chi_2 <- sum((df - dfe)^2/dfe)
+		chi_2
+		
+		#via command
+		chi123 <- chisq.test(df)
+	\end{verbatim}
+	
+	\vspace{.5cm}		
+\textit{This matrix is now contains all the expected values. To calculate the chi-squared by hand, it is the sum of ((observed values - expected values)squared/divided by the expected values) - alternatively I run a chisq.test command in R}
+	\begin{verbatim}		
+		#by hand
+		chi_2 <- sum((df - dfe)^2/dfe)
+		chi_2
+		
+		#via command
+		chi123 <- chisq.test(df)
+	\end{verbatim}
+\textit{The chi squared test statistic is 3.791 in both cases - it measures how far observed values are from the expected values}
+	\vspace{1cm}
+	
+	\item [(b)]
+	Now calculate the p-value from the test statistic you just created (in \texttt{R}).\footnote{Remember frequency should be $>$ 5 for all cells, but let's calculate the p-value here anyway.}  What do you conclude if $\alpha = 0.1$?\\
+	\vspace{.5cm}
+	
+	\textit{Chi squared tests test for statistical dependence of two variables - the null hypothesis is therefore H0: Class and bribe likelihood are independent from each other. A p value of less than 0.1 would reject this, suggesting they are not independent.}
+	
+	\vspace{.5cm}
+	\textit{To calculate this, I first find the degrees of freedom necessary for the formula in R, I then input the chi squared test statistic and degrees of freedom into the function.}
+	\begin{verbatim}		
+		#calculate degrees of freedom to see relevance of chi squared test statistic
+		dfr <- (nrow(df)-1)*(ncol(df)-1)
+		
+		#Find p-values
+		pchisq(chi_2, dfr, lower.tail = FALSE) 
+	\end{verbatim}
+	
+	\vspace{.5cm}
+		\textit{the p-value is 0.1502306 - which is larger than 0.1 so we do not reject the null hypothesis - we cannot prove they are not statically independent therefore we assume they are independent.}
+		
+	\newpage
+	\item [(c)] Calculate the standardized residuals for each cell and put them in the table below.
+	\vspace{1cm}
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{l | c c c }
+			& Not Stopped & Bribe requested & Stopped/given warning \\
+			\\[-1.8ex] 
+			\hline \\[-1.8ex]
+			Upper class & 0.3220306 & -1.641957 & 1.523026 \\
+			\\
+			Lower class & -0.3220306 & 1.641957 & -1.523026 \\
+			
+		\end{tabular}
+	\end{table}
+	
+	
+	\vspace{1cm}
+	\item [(d)] How might the standardized residuals help you interpret the results? 
+	
+	\vspace{.5cm}
+	\textit{A residual value is the difference of the observed value from the expected value, a standardized residual is a residual that has been standardized to a mean of 0 and a standard deviation of 1. This can be used to identify outliers, typically cells with values over 2/3 or under -2/-3 are considered outliers. Cells in the contingency table with high standardized residuals also contribute the most to the chi squared test statistic. For example: Both observed values for bribe requested are close to but do not exceed 2/-2, their values contribute the most to the chi squared test statistic}
+	
+	\vspace{.5cm}
+	\textit{It can also assess the overall fit of the model - too many high/low standardized residuals would indicate the observations do not appropriately capture the relationship between both variables}
+	
+\end{enumerate}
+\newpage
+
+\section*{Question 2: Economics}
+Chattopadhyay and Duflo were interested in whether women promote different policies than men.\footnote{Chattopadhyay and Duflo. (2004). ``Women as Policy Makers: Evidence from a Randomized Policy Experiment in India. \textit{Econometrica}. 72 (5), 1409-1443.} Answering this question with observational data is pretty difficult due to potential confounding problems (e.g. the districts that choose female politicians are likely to systematically differ in other aspects too). Hence, they exploit a randomized policy experiment in India, where since the mid-1990s, $\frac{1}{3}$ of village council heads have been randomly reserved for women. A subset of the data from West Bengal can be found at the following link: \url{https://raw.githubusercontent.com/kosukeimai/qss/master/PREDICTION/women.csv}\\
+
+\noindent Each observation in the data set represents a village and there are two villages associated with one GP (i.e. a level of government is called "GP"). Figure~\ref{fig:women_desc} below shows the names and descriptions of the variables in the dataset. The authors hypothesize that female politicians are more likely to support policies female voters want. Researchers found that more women complain about the quality of drinking water than men. You need to estimate the effect of the reservation policy on the number of new or repaired drinking water facilities in the villages.
+\vspace{.5cm}
+\begin{figure}[h!]
+	\caption{\footnotesize{Names and description of variables from Chattopadhyay and Duflo (2004).}}
+	\vspace{.5cm}
+	\centering
+	\label{fig:women_desc}
+\end{figure}		
+
+\newpage
+\begin{enumerate}
+	\item [(a)] State a null and alternative (two-tailed) hypothesis. 
+		\vspace{0.5cm}
+		
+		\textit{Null Hypothesis - If a village has been reserved for a female council head, the will be no difference in the number of new or repaired drinking water facilities than non-reserved villages.}
+		
+		\textit{Alternative Hypothesis - If a village has been reserved for a female council head, the number of new or repaired drinking water facilities will be higher or lower than non-reserved villages.}
+		
+	\vspace{1cm}
+	\item [(b)] Run a bivariate regression to test this hypothesis in \texttt{R} (include your code!).
+	
+	\vspace{0.5cm}
+	\textit{To run a bivariate regression to test this hypothesis I employ the lm command in R, and regress the reserved variable onto water variable - this will allow for the rejection or not of the null hypothesis}
+	\begin{verbatim}		
+	reg <- lm(data$water~data$reserved)
+	summary(reg)
+	\end{verbatim}
+
+	\vspace{1cm}
+	\item [(c)] Interpret the coefficient estimate for reservation policy. 
+
+	\vspace{0.5cm}		
+	\textit{The coefficient estimate is 9.25, which suggests that on average there is some association between having a reserved position for village council head and the repair/construction of new drinking water facilities. The p-value is  0.0197 less than 0.05, a statistically significant finding, therefore we can reject the null hypothesis.}
+\end{enumerate}
+
+
+%\end{enumerate}
+\end{document}

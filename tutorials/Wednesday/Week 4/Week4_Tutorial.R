@@ -239,7 +239,7 @@ dev.off()
 
 # Run Chi-square test
 chi <- chisq.test(df_s$genre, df_s$critics_rating)
-chi
+chi 
 
 # Extract p-value
 chi$p.value
